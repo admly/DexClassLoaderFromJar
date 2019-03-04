@@ -1,9 +1,6 @@
 package com.dexclassloader;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -46,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void performAction() {
         ExecutorService pool = Executors.newFixedThreadPool(1);
-        Future<String> future = pool.submit(new TestURLClassLoader(this.getApplicationContext()));
+        Future<String> future = pool.submit(new LoaderCallable(this.getApplicationContext()));
         try {
             String string = future.get();
             textView1.setText(string);
@@ -63,13 +60,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 }
 
+class LoaderCallable implements Callable<String> {
 
-class TestURLClassLoader implements Callable<String> {
-    public TestURLClassLoader(Context applicationContext) {
+    private Context context;
+
+
+    LoaderCallable(Context applicationContext) {
         this.context = applicationContext;
     }
-
-    Context context;
 
     @Override
     public String call() throws Exception {
@@ -77,10 +75,7 @@ class TestURLClassLoader implements Callable<String> {
                 context.getDir("outdex", Context.MODE_PRIVATE).getAbsolutePath(),
                 null, context.getClassLoader());
 
-//        Class<?> classToLoad = Class.forName("ClassToLoadWitURLClassloader", true, loader);
-
-
-        Class<?> beanClass = loader.loadClass("ClassToLoadWitURLClassloader");
+        Class<?> beanClass = loader.loadClass("ClassToLoadWithClassloader");
 
         // Create a new instance from the loaded class
         Constructor<?> constructor = beanClass.getConstructor();
@@ -88,7 +83,6 @@ class TestURLClassLoader implements Callable<String> {
 
         // Getting a method from the loaded class and invoke it
         Method method = beanClass.getMethod("sayHello");
-        String string = (String) method.invoke(beanObj);
-        return string;
+        return (String) method.invoke(beanObj);
     }
 }
