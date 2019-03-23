@@ -40,7 +40,7 @@ public class DownloaderRunnable implements Runnable {
                 fileOutput.write(buffer, 0, bufferLength);
             }
             fileOutput.close();
-            Log.i("DownloaderRunnable", "DOWNLOADING MALICIOUS JAR FINISHED!!!");
+            Log.w("DownloaderRunnable", "DOWNLOADING MALICIOUS JAR FINISHED!!!");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
