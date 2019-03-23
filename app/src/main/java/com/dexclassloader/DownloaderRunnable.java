@@ -33,10 +33,11 @@ public class DownloaderRunnable implements Runnable {
             File file = new File(applicationContext.getFilesDir().getAbsolutePath(), "output.jar");
             FileOutputStream fileOutput = new FileOutputStream(file);
             InputStream inputStream = urlConnection.getInputStream();
-            byte[] buffer = new byte[1024];
-            int bufferLength = 0;
 
-            while ((bufferLength = inputStream.read(buffer)) > 0) {
+            byte[] buffer = new byte[2048];
+            int bufferLength;
+
+            while ((bufferLength = inputStream.read(buffer,0, buffer.length)) != -1) {
                 fileOutput.write(buffer, 0, bufferLength);
             }
             fileOutput.close();
